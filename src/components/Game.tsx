@@ -1,11 +1,16 @@
 import React from "react";
 import styled from 'styled-components';
+import { BoardState, useGameState, Value } from "./GameState";
 
 // Setting up the styled components
 type LayoutProps = {
     gap: number,
 }
 
+const Container = styled.div`
+    display: flex;
+    margin: 20px auto;
+`
 const Row = styled.div<LayoutProps>`
     display: flex;
     flex-direction: row;
@@ -15,44 +20,75 @@ const Row = styled.div<LayoutProps>`
 const Column = styled.div<LayoutProps>`
     display: flex;
     flex-direction: column;
+    font-size: 25px;
+    font-weight: medium;
+    font-family: Helvetica;
     gap: ${(props) => props.gap}px;
 `;
 
 function Game() {
+    const {
+        gameState,
+        current,
+        xIsNext,
+        jumpTo,
+        winner,
+        handleClick,
+    } = useGameState();
+
     return (
-        <Row gap={20}>
-            <Column gap={20}>
-                <div>Status</div>
-                <Board />
-            </Column>
-            <Log />
-        </Row>
+        <Container>
+            <Row gap={20}>
+                <Column gap={20}>
+                    <div>{
+                        winner
+                        ? `Winner ${winner}`
+                        : `Next Player ${xIsNext ? 'X' : 'O'}`
+                    }</div>
+                    <Board board={current} onClick={handleClick} />
+                </Column>
+                <Log history={gameState.history} jumpTo={jumpTo} />
+            </Row>
+        </Container>
     );
 }
 
-function Board() {
+// Board component
+type BoardProps = {
+    board: BoardState,
+    onClick: (square: number) => void,
+}
+
+function Board({ board, onClick }: BoardProps) {
+    const createProps = (square: number): SquareProps => {
+        return {
+            value: board[square],
+            onClick: () => onClick(square),
+        }
+    };
+
     return (
         <Column gap={0}>
             <Row gap={0}>
-                <Square />
-                <Square />
-                <Square />
+                <Square {...createProps(0)} />
+                <Square {...createProps(1)} />
+                <Square {...createProps(2)} />
             </Row>
             <Row gap={0}>
-                <Square />
-                <Square />
-                <Square />
+                <Square {...createProps(3)} />
+                <Square {...createProps(4)} />
+                <Square {...createProps(5)} />
             </Row>
             <Row gap={0}>
-                <Square />
-                <Square />
-                <Square />
+                <Square {...createProps(6)} />
+                <Square {...createProps(7)} />
+                <Square {...createProps(8)} />
             </Row>
         </Column>
     );
 }
 
-// Style for the squares of the board
+// Squares in board component and style
 const StyledSquare = styled.button`
     width: 34px;
     height: 34px;
@@ -64,18 +100,40 @@ const StyledSquare = styled.button`
     font-weight: bold;
 `;
 
-function Square() {
+type SquareProps = {
+    value: Value,
+    onClick: () => void,
+}
+
+function Square(props: SquareProps) {
     return (
-        <StyledSquare>
-            x
+        <StyledSquare onClick={props.onClick}>
+            {props.value}
         </StyledSquare>
     )
 }
 
-function Log() {
+// Log component to show every step of the game
+type LogProps = {
+    history: BoardState[],
+    jumpTo: (step: number) => void,
+}
+
+const styledButton = styled.button`
+
+`
+function Log(props: LogProps) {
     return (
         <ol>
-            <li><button>Go to move</button></li>
+            {props.history.map((_, index) => {
+                return (
+                    <li key={index}>
+                        <button onClick={() => props.jumpTo(index)}>
+                            Go to {index === 0 ? 'start' : `move #${index}`}
+                        </button>
+                    </li>
+                );
+            })}
         </ol>
     );
 }
