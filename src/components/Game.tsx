@@ -10,13 +10,13 @@ const Row = styled.div<LayoutProps>`
     display: flex;
     flex-direction: row;
     gap: ${(props) => props.gap}px;
-`
+`;
 
 const Column = styled.div<LayoutProps>`
     display: flex;
     flex-direction: column;
     gap: ${(props) => props.gap}px;
-`
+`;
 
 function Game() {
     return (
@@ -27,12 +27,48 @@ function Game() {
             </Column>
             <Log />
         </Row>
-    )
+    );
 }
 
 function Board() {
     return (
-        <div>TODO: Board</div>
+        <Column gap={0}>
+            <Row gap={0}>
+                <Square />
+                <Square />
+                <Square />
+            </Row>
+            <Row gap={0}>
+                <Square />
+                <Square />
+                <Square />
+            </Row>
+            <Row gap={0}>
+                <Square />
+                <Square />
+                <Square />
+            </Row>
+        </Column>
+    );
+}
+
+// Style for the squares of the board
+const StyledSquare = styled.button`
+    width: 34px;
+    height: 34px;
+    background: black;
+    color: red;
+    border: 1px solid #999;
+    padding: 0;
+    font-size: 24px;
+    font-weight: bold;
+`;
+
+function Square() {
+    return (
+        <StyledSquare>
+            x
+        </StyledSquare>
     )
 }
 
@@ -41,7 +77,7 @@ function Log() {
         <ol>
             <li><button>Go to move</button></li>
         </ol>
-    )
+    );
 }
 
 export default Game;
