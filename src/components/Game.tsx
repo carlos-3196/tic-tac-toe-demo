@@ -119,9 +119,6 @@ type LogProps = {
     jumpTo: (step: number) => void,
 }
 
-const styledButton = styled.button`
-
-`
 function Log(props: LogProps) {
     return (
         <ol>
